@@ -1,64 +1,35 @@
-import math
-from scipy import stats
+import numpy as np
+from scipy.stats import norm
 
-class SignalDetection(hits, misses, falseAlarms, correctRejections):
-    def __init__(self):
-        pass
+class SignalDetection:
+    def __init__(self, hits, misses, falseAlarms, correctRejections):
+        self.hits = hits
+        self.misses = misses
+        self.falseAlarms = falseAlarms
+        self.correctRejections = correctRejections
 
-    def hit_rate(self, hits, misses):
-        """
-        Calculate the hit rate.
-
-        :param hits: Number of correctly detected signals
-        :param misses: Number of signals that were not detected
-        :return: Hit rate
-        """
-        return hits / (hits + misses)
-
-    def false_alarm_rate(self, false_alarms, correct_rejections):
-        """
-        Calculate the false alarm rate.
-
-        :param false_alarms: Number of noise trials incorrectly detected as signals
-        :param correct_rejections: Number of noise trials correctly identified as noise
-        :return: False alarm rate
-        """
-        return false_alarms / (false_alarms + correct_rejections)
-
-    def d_prime(self, hit_rate, false_alarm_rate):
-        """
-        Calculate d-prime given hit rate and false alarm rate.
+    def d_prime(self):
+        hit_rate = self.hits / (self.hits + self.misses)
+        fa_rate = self.falseAlarms / (self.falseAlarms + self.correctRejections)
         
-        :param hit_rate: The proportion of hits (between 0 and 1)
-        :param false_alarm_rate: The proportion of false alarms (between 0 and 1)
-        :return: The d-prime value
-        """
-        # Ensure the rates are not 0 or 1 to avoid infinite z-scores
-        hit_rate = max(min(hit_rate, 0.99999), 0.00001)
-        false_alarm_rate = max(min(false_alarm_rate, 0.99999), 0.00001)
-
-        # Calculate z-scores
-        z_hit = stats.norm.ppf(hit_rate)
-        z_fa = stats.norm.ppf(false_alarm_rate)
-
-        # Calculate d-prime
+        # Adjust rates if they are 0 or 1
+        hit_rate = max(0.01, min(hit_rate, 0.99))
+        fa_rate = max(0.01, min(fa_rate, 0.99))
+        
+        z_hit = norm.ppf(hit_rate)
+        z_fa = norm.ppf(fa_rate)
+        
         return z_hit - z_fa
 
-    def criterion(self, hit_rate, false_alarm_rate):
-        """
-        Calculate criterion given hit rate and false alarm rate.
+    def criterion(self):
+        hit_rate = self.hits / (self.hits + self.misses)
+        fa_rate = self.falseAlarms / (self.falseAlarms + self.correctRejections)
         
-        :param hit_rate: The proportion of hits (between 0 and 1)
-        :param false_alarm_rate: The proportion of false alarms (between 0 and 1)
-        :return: The criterion value
-        """
-        # Ensure the rates are not 0 or 1 to avoid infinite z-scores
-        hit_rate = max(min(hit_rate, 0.99999), 0.00001)
-        false_alarm_rate = max(min(false_alarm_rate, 0.99999), 0.00001)
-
-        # Calculate z-scores
-        z_hit = stats.norm.ppf(hit_rate)
-        z_fa = stats.norm.ppf(false_alarm_rate)
-
-        # Calculate criterion
+        # Adjust rates if they are 0 or 1
+        hit_rate = max(0.01, min(hit_rate, 0.99))
+        fa_rate = max(0.01, min(fa_rate, 0.99))
+        
+        z_hit = norm.ppf(hit_rate)
+        z_fa = norm.ppf(fa_rate)
+        
         return -0.5 * (z_hit + z_fa)
