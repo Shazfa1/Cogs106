@@ -1,7 +1,7 @@
 import math
 from scipy import stats
 
-class SignalDetectionTheory:
+class SignalDetection:
     def __init__(self):
         pass
 
