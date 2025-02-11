@@ -1,3 +1,5 @@
+# code base from UCI ZotGPT - prompted with original  equations and asked for code for each
+# changes made by group to handle edge cases
 import numpy as np
 from scipy.stats import norm
 
