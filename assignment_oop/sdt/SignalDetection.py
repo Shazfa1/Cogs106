@@ -5,9 +5,10 @@ from scipy.stats import norm
 
 class SignalDetection:
     def __init__(self, hits, misses, falseAlarms, correctRejections):
-        # Handles non-negative integers
-        if not all(isinstance(x, int) and x >= 0 for x in [hits, misses, falseAlarms, correctRejections]):
-            raise ValueError("Inputs must be non-negative integers.")
+        # Handles non-negative integers and decimals
+        if not all(isinstance(x, (int, float)) and x >= 0 and np.isfinite(x)
+                   for x in [hits, misses, falseAlarms, correctRejections]):
+            raise ValueError("Inputs must be non-negative finite integers.")
         
         self.hits = hits
         self.misses = misses
